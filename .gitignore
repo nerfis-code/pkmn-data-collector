@@ -1,0 +1,7 @@
+node_modules
+dist
+@data/gen1/cries/*
+@data/gen1/moveset/*
+@data/gen1/species/*
+@data/gen1/sprites/back/*
+@data/gen1/sprites/front/*
