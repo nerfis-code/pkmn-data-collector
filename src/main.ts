@@ -2,7 +2,7 @@ import { getAllItems, getPokemonGroupByIdLimit } from "./api";
 
 
 //getAllItems()
-getPokemonGroupByIdLimit(500)
+getPokemonGroupByIdLimit(50)
 
 
 

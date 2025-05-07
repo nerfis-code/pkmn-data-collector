@@ -58,6 +58,7 @@ export const getPkmnWithFormat = (pkmn: Pokemon) => {
         abilities: pkmn.abilities
             .map(a => a.ability.name),
         types: pkmn.types.map(t => t.type.name),
+        species: pkmn.species.name,
         cries: undefined,
         forms: undefined,
         game_indices: undefined,
@@ -65,7 +66,6 @@ export const getPkmnWithFormat = (pkmn: Pokemon) => {
         moves: undefined,
         past_abilities: undefined,
         past_types: undefined,
-        species: undefined,
         sprites: undefined,
         is_default: undefined,
         order: undefined,

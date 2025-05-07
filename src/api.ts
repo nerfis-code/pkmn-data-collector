@@ -7,6 +7,7 @@ export async function getPokemonGroupByIdLimit(id: number) {
   const speciesGroup: Obj = {}
   const movesetGroup: Obj = {}
   const formsGroup: Obj = {}
+  const varietiesGroup: Obj = {}
   for (let i = 1; i <= id; i++) {
 
     const [pkmn, species] = await Promise.all([api.pokemon.getPokemonById(i), api.pokemon.getPokemonSpeciesById(i)])
@@ -22,7 +23,9 @@ export async function getPokemonGroupByIdLimit(id: number) {
     formsGroup[species_data.name] = []
 
     const forms = await Promise.all(pkmn.forms.map(f => api.pokemon.getPokemonFormByName(f.name)))
+    const varieties = await Promise.all(species.varieties.slice(1).map(f => api.pokemon.getPokemonByName(f.pokemon.name)))
     formsGroup[species_data.name] = forms.map(f => getPkmFormWithFormat(f))
+    varietiesGroup[species_data.name] = varieties.map(v => getPkmnWithFormat(v))
 
   }
 
@@ -30,6 +33,7 @@ export async function getPokemonGroupByIdLimit(id: number) {
   save(movesetGroup, "moveset")
   save(speciesGroup, "species")
   save(formsGroup, "forms")
+  save(varietiesGroup, "varieties")
   console.log("Todo funciono Creo")
 }
 
