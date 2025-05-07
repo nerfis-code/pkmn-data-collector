@@ -28,7 +28,7 @@ export const getMoveWithFormat = (moves: PokemonMove[]) => {
         // machine: [],
         // tutor: [],
         // egg: [],
-        "moveset": []
+        "default": []
     }
     for (let m of moves) {
         const moveName = m.move.name
@@ -45,11 +45,26 @@ export const getMoveWithFormat = (moves: PokemonMove[]) => {
             //     movesResult.egg.push(`${moveName}`)
             //     break
             case 'level-up':
-                movesResult["moveset"].push([version.level_learned_at, moveName])
+                movesResult["default"].push([version.level_learned_at, moveName])
                 break
         }
     }
     return movesResult
+}
+
+export const getMoveLevel = (moves: PokemonMove[]) => {
+    const res = []
+    for (let m of moves) {
+        const moveName = m.move.name
+        const version = m.version_group_details.at(-1) // estamos en la primera gen
+        if (version == undefined) continue
+        switch (version?.move_learn_method.name) {
+            case 'level-up':
+                res.push([version.level_learned_at, moveName])
+                break
+        }
+    }
+    return res
 }
 
 export const getPkmnWithFormat = (pkmn: Pokemon) => {

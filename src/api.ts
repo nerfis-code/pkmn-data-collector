@@ -1,9 +1,9 @@
 import { MainClient, ItemClient, Pokemon } from 'pokenode-ts';
-import { downloadFile, getMoveWithFormat, getPkmFormWithFormat, getPkmnSpeciesWithFormat, getPkmnWithFormat, load, save } from './utils';
+import { downloadFile, getMoveLevel, getMoveWithFormat, getPkmFormWithFormat, getPkmnSpeciesWithFormat, getPkmnWithFormat, load, save } from './utils';
 
 export async function getPokemonGroupByIdLimit(id: number) {
   const api = new MainClient();
-  const pokemonGroup: Obj = {}
+  // const pokemonGroup: Obj = {}
   const speciesGroup: Obj = {}
   const movesetGroup: Obj = {}
   const formsGroup: Obj = {}
@@ -13,23 +13,29 @@ export async function getPokemonGroupByIdLimit(id: number) {
     const [pkmn, species] = await Promise.all([api.pokemon.getPokemonById(i), api.pokemon.getPokemonSpeciesById(i)])
     api.pokemon.getPokemonFormById
     // savePokemonAsset(pkmn)
-    const pkmn_data = getPkmnWithFormat(pkmn)
     const species_data = getPkmnSpeciesWithFormat(species)
-    const moveset = getMoveWithFormat(pkmn.moves)
 
-    pokemonGroup[pkmn_data.name] = pkmn_data
-    movesetGroup[pkmn_data.name] = moveset
+    movesetGroup[species_data.name] = { default: null }
     speciesGroup[species_data.name] = species_data
+    varietiesGroup[species_data.name] = []
     formsGroup[species_data.name] = []
 
     const forms = await Promise.all(pkmn.forms.map(f => api.pokemon.getPokemonFormByName(f.name)))
-    const varieties = await Promise.all(species.varieties.slice(1).map(f => api.pokemon.getPokemonByName(f.pokemon.name)))
+    const varieties = await Promise.all(species.varieties.map(f => api.pokemon.getPokemonByName(f.pokemon.name)))
     formsGroup[species_data.name] = forms.map(f => getPkmFormWithFormat(f))
-    varietiesGroup[species_data.name] = varieties.map(v => getPkmnWithFormat(v))
+    for (let v of varieties) {
+      const pkm = getPkmnWithFormat(v)
+      varietiesGroup[species_data.name].push(pkm)
+      const moveset = getMoveLevel(pkmn.moves)
+      if (!movesetGroup[species_data.name].default) {
+        movesetGroup[species_data.name].default = moveset
+      } else if (movesetGroup[species_data.name].default.at(-1)[1] != moveset.at(-1)?.at(1)) {
+        movesetGroup[species_data.name][pkm.name] = moveset
+      }
+    }
 
   }
 
-  save(pokemonGroup, "pokemon")
   save(movesetGroup, "moveset")
   save(speciesGroup, "species")
   save(formsGroup, "forms")
