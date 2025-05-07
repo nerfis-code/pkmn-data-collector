@@ -1,7 +1,8 @@
 import axios from "axios";
 import fs from 'fs'
 import stringify from "json-stringify-pretty-compact";
-import { Pokemon, PokemonMove } from "pokenode-ts";
+import { Pokemon, PokemonForm, PokemonMove, PokemonSpecies } from "pokenode-ts";
+import { types } from "util";
 
 export async function downloadFile(url: string | null, path: string) {
     if (url == null) return
@@ -71,6 +72,47 @@ export const getPkmnWithFormat = (pkmn: Pokemon) => {
         held_items: undefined,
         stats: pkmn.stats.map(s => s.base_stat),
         effort: pkmn.stats.map(s => s.effort)
+    }
+}
+export const getPkmFormWithFormat = (pkmn: PokemonForm) => {
+    return {
+        ...pkmn,
+        pokemon: pkmn.pokemon.name,
+        types: pkmn.types.map(t => t.type.name),
+        version_group: undefined,
+        version_group_details: undefined,
+        order: undefined,
+        sprites: undefined,
+        name_oficial: pkmn.names.find(n => n.language.name == 'en')?.name,
+        names: undefined,
+        form_name_oficial: pkmn.form_names.find(n => n.language.name == 'en')?.name,
+        form_names: undefined,
+    }
+}
+export const getPkmnSpeciesWithFormat = (species: PokemonSpecies) => {
+    return {
+        ...species,
+        egg_groups: species.egg_groups.map(e => e.name),
+        growth_rate: species.growth_rate.name,
+        habitat: species.habitat?.name,
+        order: undefined,
+        pokedex_numbers: undefined,
+        evolves_from_species: species.evolves_from_species?.name,
+        evolution_chain: undefined,
+        names: undefined,
+        name_oficial: species.names.find(n => n.language.name == 'en')?.name,
+
+        flavor_text_entries: species.flavor_text_entries.reverse().find(n => n.language.name == 'en')?.flavor_text,
+        pal_park_encounters: undefined,
+        form_descriptions: undefined,
+        genera: undefined,
+
+        color: undefined,
+        shape: undefined,
+        generation: undefined,
+        is_baby: undefined,
+
+        varieties: undefined,
     }
 }
 export const save = (obj: any, name: string) => {
